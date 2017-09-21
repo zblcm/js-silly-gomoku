@@ -256,7 +256,17 @@ ViewHandler.mouse_event = function(key, mx, my) {
 		}
 		else {
 		}
-	}
+	}/*
+	if (key != 0) {
+		if (ViewHandler.current_player) {
+			var x = Math.round((mx - ViewHandler.INIT_SIZE) / ViewHandler.GRID_SIZE);
+			var y = Math.round((my - ViewHandler.INIT_SIZE) / ViewHandler.GRID_SIZE);
+			Brain.main(ViewHandler.chess_x, ViewHandler.chess_y);
+			Brain.predictive_suggestion(x, y);
+		}
+		else {
+		}
+	}*/
 };
 
 ViewHandler.main_loop = function() {
