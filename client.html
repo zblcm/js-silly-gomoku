@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<style type="text/css">
+<!--
+body {
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+	margin-left: 0px
+}
+-->
+</style>
+
+<html>
+<body>
+<canvas id="Canvas" width="480" height="480" style="position:absolute; top:0;left:0 border:1px solid #d3d3d3;"></canvas>
+
+<script type="text/javascript" src="viewhandler.js"></script>
+<script type="text/javascript" src="brain.js"></script>
+
+
+<script>
+
+window.onload = function() {
+	ViewHandler.canvas = document.getElementById("Canvas");
+	ViewHandler.canvas.onmousedown = function(event) {
+		ViewHandler.mouse_event(event.button, event.clientX, event.clientY);
+	}
+	ViewHandler.ctx = ViewHandler.canvas.getContext("2d");
+	ViewHandler.assemble_playfield();
+}
+
+
+</script>
+
+</body>
+</html>
