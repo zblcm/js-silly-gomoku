@@ -1,5 +1,8 @@
 var Brain = {};
-Brain.weight_table = [1024, 256, 64, 16, 4, 1];
+Brain.attack_weight_table = [1024, 1024, 256, 16, 4, 1];
+Brain.defend_weight_table = [1024, 256, 64, 16, 8, 4];
+Brain.attack_ratio = 0.5;
+Brain.defend_ratio = 0.5;
 
 Brain.Winable = function(x_list, y_list) {
 	this.x_list = x_list;
@@ -95,7 +98,7 @@ Brain.Node = function(x, y) {
 	this.winables = [];
 	this.player = 0;
 	
-	this.get_raw_weight = function(player) {
+	this.get_raw_weight = function(player, weight_table) {
 		if (this.player != 0) {
 			return 0;
 		}
@@ -107,7 +110,7 @@ Brain.Node = function(x, y) {
 			winable = this.winables[i];
 			missing = winable.player_missing(player);
 			if (missing >= 0) {
-				w = w + Brain.weight_table[missing];
+				w = w + weight_table[missing];
 			}
 		}
 		return w;
@@ -201,7 +204,7 @@ Brain.calculate_accurate_weight = function(ratioA, ratioD) {
 	}
 	for (i = 0; i < nodes.length; i ++) {
 		node = nodes[i];
-		node.raw_weight = (node.get_raw_weight(Brain.playerS) * ratioA) + (node.get_raw_weight(Brain.playerE) * ratioD);
+		node.raw_weight = (node.get_raw_weight(Brain.playerS, Brain.attack_weight_table) * ratioA) + (node.get_raw_weight(Brain.playerE, Brain.defend_weight_table) * ratioD);
 	}
 	for (i = 0; i < nodes.length; i ++) {
 		node = nodes[i];
@@ -210,7 +213,7 @@ Brain.calculate_accurate_weight = function(ratioA, ratioD) {
 		for (j = 0; j < nodes.length; j ++) {
 			if (i != j) {
 				node_sub = nodes[j];
-				node_sub.sub_weight = (node_sub.get_raw_weight(Brain.playerS) * ratioA) + (node_sub.get_raw_weight(Brain.playerE) * ratioD);
+				node_sub.sub_weight = (node_sub.get_raw_weight(Brain.playerS, Brain.attack_weight_table) * ratioA) + (node_sub.get_raw_weight(Brain.playerE, Brain.defend_weight_table) * ratioD);
 				sum_sub_weight = sum_sub_weight + node_sub.sub_weight;
 			}
 		}
@@ -305,7 +308,7 @@ Brain.almost_lose = function() {
 	return [node.x, node.y];
 }
 Brain.weighted_answer = function() {
-	Brain.calculate_accurate_weight(1, 1);
+	Brain.calculate_accurate_weight(Brain.attack_ratio, Brain.defend_ratio);
 	var nodes = Brain.fetch_accurate_nodes();
 	var index = Math.floor(Math.random() * nodes.length);
 	var node = nodes[index];
