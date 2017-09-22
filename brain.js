@@ -1,12 +1,54 @@
 var Brain = {};
+
+/*
+// Naive Defence 天真防御 - 极度偏防御的策略 - 评分: 2
+Brain.attack_weight_table = [100000, 128, 64, 16, 4, 1];
+Brain.defend_weight_table = [100000, 128, 64, 32, 16, 4];
+Brain.attack_ratio = 0;
+Brain.defend_ratio = 0;
+Brain.negative_power_1 = 1;
+Brain.negative_power_2 = 1;
+*/
+
+/*
+// Defender 防御者 - 稍微偏防御的策略 - 评分: 3
+Brain.attack_weight_table = [100000, 4096, 2048, 128, 8, 1];
+Brain.defend_weight_table = [100000, 2048, 1024, 512, 64, 1];
+Brain.attack_ratio = 3;
+Brain.defend_ratio = 4;
+Brain.negative_power_1 = 5;
+Brain.negative_power_2 = 5;
+*/
+
+/*
+// Sniper 突击者 - 积累优势连续进攻 - 评分: 3
 Brain.attack_weight_table = [100000, 4096, 2048, 256, 8, 1];
 Brain.defend_weight_table = [100000, 2048, 1024, 512, 64, 1];
-// Brain.attack_negation_table = [100000, 256, 128, 32, 2, 0];
-// Brain.defend_negation_table = [100000, 128, 64, 16, 2, 0];
-Brain.attack_ratio = 1;
-Brain.defend_ratio = 1;
+Brain.attack_ratio = 4;
+Brain.defend_ratio = 4;
+Brain.negative_power_1 = 4;
+Brain.negative_power_2 = 4;
+*/
+
+
+// Rusher 快攻者 - 主动创造进攻机会 - 评分: 3
+Brain.attack_weight_table = [100000, 4096, 2048, 512, 16, 1];
+Brain.defend_weight_table = [100000, 2048, 1024, 256, 64, 1];
+Brain.attack_ratio = 4;
+Brain.defend_ratio = 4;
 Brain.negative_power_1 = 3;
 Brain.negative_power_2 = 3;
+
+
+/*
+// Mad Barserker 狂战士 - 尝试一切办法进攻 - 评分: 1
+Brain.attack_weight_table = [100000, 64, 32, 16, 4, 1];
+Brain.defend_weight_table = [100000, 32, 16, 8, 4, 1];
+Brain.attack_ratio = 0;
+Brain.defend_ratio = 0;
+Brain.negative_power_1 = 1;
+Brain.negative_power_2 = 1;
+*/
 
 Brain.Winable = function(x_list, y_list) {
 	this.x_list = x_list;
@@ -225,7 +267,7 @@ Brain.assemble_field = function() {
 	}
 }
 
-Brain.calculate_accurate_weight = function(ratioA, ratioD) {
+Brain.calculate_accurate_weight = function() {
 	var x;
 	var y;
 	var i;
@@ -247,22 +289,22 @@ Brain.calculate_accurate_weight = function(ratioA, ratioD) {
 	}
 	for (i = 0; i < nodes.length; i ++) {
 		node = nodes[i];
-		node.AR = (node.get_raw_weight(Brain.playerS, Brain.attack_weight_table));
+		node.AR = node.get_raw_weight(Brain.playerS, Brain.attack_weight_table);
 		node.raw_weight = 0.01 + node.AR;
 	}
 	for (i = 0; i < nodes.length; i ++) {
 		node = nodes[i];
-		node.AA = (node.get_accurate_weight(Brain.playerS, Brain.attack_weight_table) * ratioA);
+		node.AA = node.get_accurate_weight(Brain.playerS, Brain.attack_weight_table);
 		node.acc_weight = node.acc_weight + node.AA;
 	}
 	for (i = 0; i < nodes.length; i ++) {
 		node = nodes[i];
-		node.DR = (node.get_raw_weight(Brain.playerE, Brain.defend_weight_table));
+		node.DR = node.get_raw_weight(Brain.playerE, Brain.defend_weight_table);
 		node.raw_weight = 0.01 + node.DR;
 	}
 	for (i = 0; i < nodes.length; i ++) {
 		node = nodes[i];
-		node.DA = (node.get_accurate_weight(Brain.playerE, Brain.defend_weight_table) * ratioD);
+		node.DA = node.get_accurate_weight(Brain.playerE, Brain.defend_weight_table);
 		node.acc_weight = node.acc_weight + node.DA;
 	}
 }
@@ -291,20 +333,20 @@ Brain.predictive_suggestion = function(tx, ty) {
 	}
 	for (i = 0; i < nodes.length; i ++) {
 		node = Brain.field[tx][ty];
-		node.AR = (node.get_raw_weight(Brain.playerE, Brain.attack_weight_table));
+		node.AR = node.get_raw_weight(Brain.playerE, Brain.attack_weight_table);
 		node.raw_weight = 0.01 + node.AR;
 	}
 	node = Brain.field[tx][ty];
-	node.AA = (node.get_accurate_weight(Brain.playerE, Brain.attack_weight_table) * ratioA);
+	node.AA = node.get_accurate_weight(Brain.playerE, Brain.attack_weight_table);
 	node.acc_weight = node.acc_weight + node.AA;
 	
 	for (i = 0; i < nodes.length; i ++) {
 		node = nodes[i];
-		node.DR = (node.get_raw_weight(Brain.playerS, Brain.defend_weight_table));
+		node.DR = node.get_raw_weight(Brain.playerS, Brain.defend_weight_table);
 		node.raw_weight = 0.01 + node.DR;
 	}
 	node = Brain.field[tx][ty];
-	node.DA = (node.get_accurate_weight(Brain.playerS, Brain.defend_weight_table) * ratioD);
+	node.DA = node.get_accurate_weight(Brain.playerS, Brain.defend_weight_table);
 	node.acc_weight = node.acc_weight + node.DA;
 	
 	console.log("[" + node.x + ", " + node.y + "]");
@@ -319,7 +361,7 @@ Brain.predictive_suggestion = function(tx, ty) {
 	console.log("----------");
 }
 
-Brain.fetch_accurate_nodes = function() {
+Brain.fetch_accurate_nodes = function(ratioA, ratioD) {
 	var max = 0;
 	var nodes;
 	var x;
@@ -334,9 +376,9 @@ Brain.fetch_accurate_nodes = function() {
 		for (y = 0; y < 15; y ++) {
 			node = Brain.field[x][y];
 			if (node.player == Brain.playerN) {
-				AA = node.AA * 4;
+				AA = node.AA * ratioA;
 				AD = node.AA + node.DA;
-				DD = node.DA * 4;
+				DD = node.DA * ratioD;
 				if (AA > AD) {
 					AD = AA;
 				}
@@ -413,8 +455,8 @@ Brain.almost_lose = function() {
 	return [node.x, node.y];
 }
 Brain.weighted_answer = function() {
-	Brain.calculate_accurate_weight(Brain.attack_ratio, Brain.defend_ratio);
-	var nodes = Brain.fetch_accurate_nodes();
+	Brain.calculate_accurate_weight();
+	var nodes = Brain.fetch_accurate_nodes(Brain.attack_ratio, Brain.defend_ratio);
 	var index = Math.floor(Math.random() * nodes.length);
 	var node = nodes[index];
 	return [node.x, node.y];
