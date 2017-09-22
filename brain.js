@@ -1,6 +1,6 @@
 var Brain = {};
-Brain.attack_weight_table = [100000, 8192, 2048, 256, 16, 1];
-Brain.defend_weight_table = [100000, 3072, 1024, 512, 36, 4];
+Brain.attack_weight_table = [100000, 4096, 2048, 256, 8, 1];
+Brain.defend_weight_table = [100000, 2048, 1024, 512, 64, 1];
 // Brain.attack_negation_table = [100000, 256, 128, 32, 2, 0];
 // Brain.defend_negation_table = [100000, 128, 64, 16, 2, 0];
 Brain.attack_ratio = 1;
@@ -326,15 +326,28 @@ Brain.fetch_accurate_nodes = function() {
 	var y;
 	var node;
 	
+	var AA;
+	var AD;
+	var DD;
+	
 	for (x = 0; x < 15; x ++) {
 		for (y = 0; y < 15; y ++) {
 			node = Brain.field[x][y];
 			if (node.player == Brain.playerN) {
-				if ((node.acc_weight > max) || (!nodes)) {
-					nodes = [];
-					max = node.acc_weight;
+				AA = node.AA * 4;
+				AD = node.AA + node.DA;
+				DD = node.DA * 4;
+				if (AA > AD) {
+					AD = AA;
 				}
-				if (node.acc_weight == max) {
+				if (DD > AD) {
+					AD = DD;
+				}
+				if ((AD > max) || (!nodes)) {
+					nodes = [];
+					max = AD;
+				}
+				if (AD == max) {
 					nodes.push(node);
 				}
 			}
