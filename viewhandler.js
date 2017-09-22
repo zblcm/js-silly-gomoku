@@ -256,7 +256,7 @@ ViewHandler.mouse_event = function(key, mx, my) {
 		}
 		else {
 		}
-	}/*
+	}
 	if (key != 0) {
 		if (ViewHandler.current_player) {
 			var x = Math.round((mx - ViewHandler.INIT_SIZE) / ViewHandler.GRID_SIZE);
@@ -266,7 +266,7 @@ ViewHandler.mouse_event = function(key, mx, my) {
 		}
 		else {
 		}
-	}*/
+	}
 };
 
 ViewHandler.main_loop = function() {

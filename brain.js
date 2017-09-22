@@ -1,12 +1,12 @@
 var Brain = {};
-Brain.attack_weight_table = [100000, 2048, 512, 32, 16, 8];
-Brain.defend_weight_table = [100000, 1024, 256, 64, 16, 4];
+Brain.attack_weight_table = [100000, 8192, 2048, 256, 16, 1];
+Brain.defend_weight_table = [100000, 3072, 1024, 512, 36, 4];
 // Brain.attack_negation_table = [100000, 256, 128, 32, 2, 0];
 // Brain.defend_negation_table = [100000, 128, 64, 16, 2, 0];
 Brain.attack_ratio = 1;
 Brain.defend_ratio = 1;
-Brain.negative_power_1 = 1.5;
-Brain.negative_power_2 = 1.5;
+Brain.negative_power_1 = 3;
+Brain.negative_power_2 = 3;
 
 Brain.Winable = function(x_list, y_list) {
 	this.x_list = x_list;
@@ -266,7 +266,7 @@ Brain.calculate_accurate_weight = function(ratioA, ratioD) {
 		node.acc_weight = node.acc_weight + node.DA;
 	}
 }
-/*
+
 Brain.predictive_suggestion = function(tx, ty) {
 	var x;
 	var y;
@@ -295,25 +295,30 @@ Brain.predictive_suggestion = function(tx, ty) {
 		node.raw_weight = 0.01 + node.AR;
 	}
 	node = Brain.field[tx][ty];
-	node.AA = (node.get_accurate_weight(Brain.playerE, Brain.attack_negation_table) * ratioA);
+	node.AA = (node.get_accurate_weight(Brain.playerE, Brain.attack_weight_table) * ratioA);
 	node.acc_weight = node.acc_weight + node.AA;
 	
 	for (i = 0; i < nodes.length; i ++) {
 		node = nodes[i];
 		node.DR = (node.get_raw_weight(Brain.playerS, Brain.defend_weight_table));
+		node.raw_weight = 0.01 + node.DR;
 	}
 	node = Brain.field[tx][ty];
-	node.acc_weight = node.acc_weight + node.DR;
+	node.DA = (node.get_accurate_weight(Brain.playerS, Brain.defend_weight_table) * ratioD);
+	node.acc_weight = node.acc_weight + node.DA;
+	
 	console.log("[" + node.x + ", " + node.y + "]");
 	console.log("Atk raw:" + node.AR);
 	console.log("Atk neg:" + (node.AR - node.AA));
 	console.log("Atk acc:" + node.AA);
 	console.log("Def raw:" + node.DR);
+	console.log("Def neg:" + (node.DR - node.DA));
+	console.log("Def acc:" + node.DA);
 	console.log("Wit sum:" + node.acc_weight);
 	
 	console.log("----------");
 }
-*/
+
 Brain.fetch_accurate_nodes = function() {
 	var max = 0;
 	var nodes;
