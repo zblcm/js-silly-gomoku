@@ -1,9 +1,12 @@
 var Brain = {};
-Brain.attack_weight_table = [100000, 512, 256, 64, 8, 1];
-Brain.attack_negation_table = [100000, 256, 128, 32, 2, 0];
-Brain.defend_weight_table = [100000, 256, 128, 32, 8, 2];
+Brain.attack_weight_table = [100000, 2048, 512, 32, 16, 8];
+Brain.defend_weight_table = [100000, 1024, 256, 64, 16, 4];
+// Brain.attack_negation_table = [100000, 256, 128, 32, 2, 0];
+// Brain.defend_negation_table = [100000, 128, 64, 16, 2, 0];
 Brain.attack_ratio = 1;
 Brain.defend_ratio = 1;
+Brain.negative_power_1 = 1.5;
+Brain.negative_power_2 = 1.5;
 
 Brain.Winable = function(x_list, y_list) {
 	this.x_list = x_list;
@@ -128,14 +131,14 @@ Brain.Node = function(x, y) {
 			if (Brain.empty_nodes[j] != this) {
 				node_sub = Brain.empty_nodes[j];
 				node_sub.sub_weight = node_sub.get_raw_weight(player, weight_table);
-				sum_sub_prob = sum_sub_prob + (node_sub.sub_weight * node_sub.sub_weight);
+				sum_sub_prob = sum_sub_prob + (Math.pow(node_sub.sub_weight, Brain.negative_power_1));
 			}
 		}
 		this.player = Brain.playerN;
 		for (j = 0; j < Brain.empty_nodes.length; j ++) {
 			if (Brain.empty_nodes[j] != this) {
 				node_sub = Brain.empty_nodes[j];
-				node_sub.prob = (node_sub.sub_weight * node_sub.sub_weight) / sum_sub_prob;
+				node_sub.prob = (Math.pow(Math.pow(node_sub.sub_weight, Brain.negative_power_1), Brain.negative_power_2)) / (Math.pow(sum_sub_prob, Brain.negative_power_2));
 			}
 		}
 		this.neg_weight = 0;
@@ -249,13 +252,18 @@ Brain.calculate_accurate_weight = function(ratioA, ratioD) {
 	}
 	for (i = 0; i < nodes.length; i ++) {
 		node = nodes[i];
-		node.AA = (node.get_accurate_weight(Brain.playerS, Brain.attack_negation_table) * ratioA);
+		node.AA = (node.get_accurate_weight(Brain.playerS, Brain.attack_weight_table) * ratioA);
 		node.acc_weight = node.acc_weight + node.AA;
 	}
 	for (i = 0; i < nodes.length; i ++) {
 		node = nodes[i];
 		node.DR = (node.get_raw_weight(Brain.playerE, Brain.defend_weight_table));
-		node.acc_weight = node.acc_weight + node.DR;
+		node.raw_weight = 0.01 + node.DR;
+	}
+	for (i = 0; i < nodes.length; i ++) {
+		node = nodes[i];
+		node.DA = (node.get_accurate_weight(Brain.playerE, Brain.defend_weight_table) * ratioD);
+		node.acc_weight = node.acc_weight + node.DA;
 	}
 }
 /*
