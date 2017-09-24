@@ -11,55 +11,12 @@ var Brain = {};
  *
  ***************************************************/
 
-/*
-// Naive Defence 天真防御 - 极度偏防御的策略 - 评分: 2
-Brain.attack_weight_table = [100000, 128, 64, 16, 4, 1];
-Brain.defend_weight_table = [100000, 128, 64, 32, 16, 4];
-Brain.attack_ratio = 0;
-Brain.defend_ratio = 0;
+Brain.attack_weight_table = [100000, 1728, 576, 64, 2, 1];
+Brain.defend_weight_table = [100000, 1536, 512, 128, 4, 1];
+Brain.attack_ratio = 2;
+Brain.defend_ratio = 2;
 Brain.negative_power_1 = 1;
-Brain.negative_power_2 = 1;
-*/
-
-/*
-// Defender 防御者 - 稍微偏防御的策略 - 评分: 3
-Brain.attack_weight_table = [100000, 4096, 2048, 128, 8, 1];
-Brain.defend_weight_table = [100000, 2048, 1024, 512, 64, 1];
-Brain.attack_ratio = 3;
-Brain.defend_ratio = 4;
-Brain.negative_power_1 = 5;
-Brain.negative_power_2 = 5;
-*/
-
-/*
-// Sniper 突击者 - 积累优势连续进攻 - 评分: 3
-Brain.attack_weight_table = [100000, 4096, 2048, 256, 8, 1];
-Brain.defend_weight_table = [100000, 2048, 1024, 512, 64, 1];
-Brain.attack_ratio = 4;
-Brain.defend_ratio = 4;
-Brain.negative_power_1 = 4;
-Brain.negative_power_2 = 4;
-*/
-
-
-// Rusher 快攻者 - 主动创造进攻机会 - 评分: 3
-Brain.attack_weight_table = [100000, 4096, 2048, 512, 16, 1];
-Brain.defend_weight_table = [100000, 2048, 1024, 256, 64, 1];
-Brain.attack_ratio = 4;
-Brain.defend_ratio = 4;
-Brain.negative_power_1 = 3;
-Brain.negative_power_2 = 3;
-
-
-/*
-// Mad Barserker 狂战士 - 尝试一切办法进攻 - 评分: 1
-Brain.attack_weight_table = [100000, 64, 32, 16, 4, 1];
-Brain.defend_weight_table = [100000, 32, 16, 8, 4, 1];
-Brain.attack_ratio = 0;
-Brain.defend_ratio = 0;
-Brain.negative_power_1 = 1;
-Brain.negative_power_2 = 1;
-*/
+Brain.negative_power_2 = 2;
 
 Brain.Winable = function(x_list, y_list) {
 	this.x_list = x_list;
